@@ -5,7 +5,12 @@ module.exports = [
         url: 'cats/felix.png',
         year: 1892,
         lives: 3,
-        isSidekick: false
+        isSidekick: false,
+        owner: {
+            name: 'johny',
+            age: 34,
+
+        }
     },
     {
         name: 'Garfield',
@@ -13,7 +18,12 @@ module.exports = [
         url: 'cats/garfield.jpeg',
         year: 1978,
         lives: 7,
-        isSidekick: false
+        isSidekick: false,
+        owner: {
+            name: 'johny',
+            age: 34,
+            
+        }
     },
     {
         name: 'Duchess',
@@ -21,7 +31,12 @@ module.exports = [
         url: 'cats/duchess.jpeg',
         year: 1970,
         lives: 9,
-        isSidekick: false
+        isSidekick: false,
+        owner: {
+            name: 'johny',
+            age: 34,
+            
+        }
     },
     {
         name: 'Stimpy',

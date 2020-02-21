@@ -19,6 +19,7 @@ app.use(morgan('dev')); // http logging
 app.use(cors()); // enable CORS request
 app.use(express.static('public')); // server files from /public folder
 app.use(express.json()); // enable reading incoming json data
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
 // API Routes
 
@@ -47,19 +48,40 @@ app.get('/api/cats', async (req, res) => {
 
 });
 
+// using .post instead of get
 app.post('/api/cats', async (req, res) => {
-    const cat = req.body;
-
+    // using req.body instead of req.params or req.query (which belong to /GET requests)
     try {
+        console.log(req.body);
+        // make a new cat out of the cat that comes in req.body;
         const result = await client.query(`
             INSERT INTO cats (name, type_id, url, year, lives, is_sidekick)
             VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING *;
         `,
-            [cat.name, cat.typeId, cat.url, cat.year, cat.lives, cat.isSidekick]
+        // pass the values in an array so that pg.Client can sanitize them
+            [req.body.name, req.body.typeId, req.body.url, req.body.year, req.body.lives, req.body.isSidekick]
         );
 
-        res.json(result.rows[0]);
+        res.json(result.rows[0]); // return just the first result of our query
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({
+            error: err.message || err
+        });
+    }
+});
+
+app.get('/api/cat/:id', async (req, res) => {
+    try {
+        const result = await client.query(`
+            SELECT *
+            FROM cats
+            WHERE cats.id = ${req.params.id}
+        `);
+
+        res.json(result.rows);
     }
     catch (err) {
         console.log(err);

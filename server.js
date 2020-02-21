@@ -78,7 +78,7 @@ app.get('/api/cat/:id', async (req, res) => {
         const result = await client.query(`
             SELECT *
             FROM cats
-            WHERE cats.id = ${req.params.id}
+            WHERE cats.id='${req.params.id}'
         `);
 
         res.json(result.rows);

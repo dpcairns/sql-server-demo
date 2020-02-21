@@ -2,6 +2,7 @@ require('dotenv').config();
 const pg = require('pg');
 const Client = pg.Client;
 // import our seed data:
+const types = require('./types');
 const cats = require('./cats');
 
 run();
@@ -12,23 +13,62 @@ async function run() {
     try {
         await client.connect();
 
-        // "Promise all" does a parallel execution of async tasks
-        await Promise.all(
-            // for every cat data, we want a promise to insert into the db
-            cats.map(cat => {
-
-                // This is the query to insert a cat into the db.
-                // First argument is the function is the "parameterized query"
-                return client.query(`
-                    INSERT INTO cats (name, type, url, year, lives, is_sidekick)
-                    VALUES ($1, $2, $3, $4, $5, $6);
+        // First save types and get each returned row which has
+        // the id of the type. Notice use of RETURNING:
+        const savedTypes = await Promise.all(
+            types.map(async type => {
+                const result = await client.query(`
+                    INSERT INTO types (name)
+                    VALUES ($1)
+                    RETURNING *;
                 `,
-                    // Second argument is an array of values for each parameter in the query:
-                    [cat.name, cat.type, cat.url, cat.year, cat.lives, cat.isSidekick]);
+                    [type]);
 
+                return result.rows[0];
             })
         );
 
+        [
+            { name: 'orange tabby', id: 1 },
+            { name: 'tuxedo', id: 2 },
+            { name: 'angora', id: 3 },
+        ];
+
+        [
+            {
+                name: 'Felix',
+                type: 'Tuxedo',
+                url: 'assets/cats/felix.png',
+                year: 1892,
+                lives: 3,
+                isSidekick: false
+            },
+            {
+                name: 'Garfield',
+                type: 'Orange Tabby',
+                url: 'assets/cats/garfield.jpeg',
+                year: 1978,
+                lives: 7,
+                isSidekick: false
+            },
+        ]
+        await Promise.all(
+            cats.map(cat => {
+
+                // Find the corresponding type id
+                // find the id of the matching cat type!
+                const type = savedTypes.find(type => {
+                    return type.name === cat.type;
+                });
+
+                return client.query(`
+                    INSERT INTO cats (name, type_id, url, year, lives, is_sidekick)
+                    VALUES ($1, $2, $3, $4, $5, $6);
+                `,
+                    [cat.name, type.id, cat.url, cat.year, cat.lives, cat.isSidekick]);
+
+            })
+        );
 
         console.log('seed data load complete');
     }

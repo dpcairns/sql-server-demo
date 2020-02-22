@@ -27,31 +27,6 @@ async function run() {
                 return result.rows[0];
             })
         );
-
-        [
-            { name: 'orange tabby', id: 1 },
-            { name: 'tuxedo', id: 2 },
-            { name: 'angora', id: 3 },
-        ];
-
-        [
-            {
-                name: 'Felix',
-                type: 'Tuxedo',
-                url: 'assets/cats/felix.png',
-                year: 1892,
-                lives: 3,
-                isSidekick: false
-            },
-            {
-                name: 'Garfield',
-                type: 'Orange Tabby',
-                url: 'assets/cats/garfield.jpeg',
-                year: 1978,
-                lives: 7,
-                isSidekick: false
-            },
-        ]
         await Promise.all(
             cats.map(cat => {
 

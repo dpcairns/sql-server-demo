@@ -73,13 +73,15 @@ app.post('/api/cats', async (req, res) => {
     }
 });
 
-app.get('/api/cat/:id', async (req, res) => {
+app.get('/api/cat/:myCatId', async (req, res) => {
     try {
         const result = await client.query(`
             SELECT *
             FROM cats
-            WHERE cats.id='${req.params.id}'
-        `);
+            WHERE cats.id=$1`, 
+            // the second parameter is an array of values to be SANITIZED then inserted into the query
+            // i only know this because of the `pg` docs
+        [req.params.myCatId]);
 
         res.json(result.rows);
     }

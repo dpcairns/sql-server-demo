@@ -85,7 +85,7 @@ app.put('/api/cats', async (req, res) => {
                 lives = '${req.body.lives}', 
                 year = '${req.body.year}', 
                 url = '${req.body.url}',
-                type_id = '${req.body.type_id}',
+                type_id = '${req.body.type_id}'
             WHERE id = ${req.body.id};
         `,
     );

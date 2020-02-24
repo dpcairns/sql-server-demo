@@ -120,6 +120,23 @@ app.get('/api/cat/:myCatId', async (req, res) => {
     }
 });
 
+app.delete('/api/cat/:myCatId', async (req, res) => {
+    try {
+        const result = await client.query(`
+        DELETE FROM cats where id = ${req.params.myCatId} 
+        `);
+
+        res.json(result.rows);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({
+            error: err.message || err
+        });
+    }
+});
+
+
 // *** TYPES ***
 app.get('/api/types', async (req, res) => {
     try {

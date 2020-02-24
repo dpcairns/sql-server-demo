@@ -55,9 +55,7 @@ app.post('/api/cats', async (req, res) => {
         console.log(req.body);
         // make a new cat out of the cat that comes in req.body;
         const result = await client.query(`
-            INSERT INTO cats (name, type_id, url, year, lives, is_sidekick)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING *;
+            DELETE FROM cats where id= ${req.body.id}
         `,
         // pass the values in an array so that pg.Client can sanitize them
             [req.body.name, req.body.typeId, req.body.url, req.body.year, req.body.lives, req.body.isSidekick]
